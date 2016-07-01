@@ -2,7 +2,6 @@ import os
 import tornado.ioloop
 import tornado.web
 import tornado.websocket
-from tornado.options import define, options
 
 from models import *
 

@@ -1,3 +1,7 @@
+import requests
+from settings import BING_SEARCH_API_KEY
+
+
 class Bot:
     def __init__(self):
         self.__to_do_list = ToDoList()
@@ -17,8 +21,19 @@ class Bot:
         if commands[0] == 'todo':
             return self.__to_do_list.run_command(commands[1:])
 
+        if commands[0] == 'search':
+            return self.web_search(commands[1:])
+
     def __ping(self):
         return {'data': 'pong'}
+
+    def web_search(self, text):
+        send_data = ''
+        if len(text) != 0:
+            result = WebSearchClient().search(text[0])[0]
+            send_data = result['Title'] + ':  ' + result['Url']
+        return {'data': send_data}
+
 
 
 class ToDoList:
@@ -34,6 +49,8 @@ class ToDoList:
 
         elif commands[0] == 'list':
             return self.list()
+        else:
+            return {'data': 'command not found'}
 
     def add(self, commands):
         self.__to_do_list.append({'name': commands[0], 'description': commands[1]})
@@ -95,3 +112,12 @@ class User:
         self.__ws.write_message(message)
 
 
+class WebSearchClient:
+    def __init__(self):
+        self.url = 'http://api.datamarket.azure.com/Bing/Search/v1/Web?'
+
+    def search(self, query):
+        api_key = BING_SEARCH_API_KEY
+        payload = {'Query': "'{}'".format(query), '$format': 'json'}
+        r = requests.get(self.url, auth=(api_key, api_key), params=payload)
+        return r.json()['d']['results']
