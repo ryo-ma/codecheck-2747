@@ -32,6 +32,7 @@ class SendWebSocketHandler(tornado.websocket.WebSocketHandler):
 
     def on_message(self, message):
         print(message)
+        self.users.broadcast_message({'data': message})
         send_data = self.bot.run_command(message)
         self.users.broadcast_message(send_data)
 
