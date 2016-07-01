@@ -1,6 +1,4 @@
-'use strict';
-
-var ws = new WebSocket('ws://localhost:3000/');
+var ws = new WebSocket('wss://codecheck10202-3.herokuapp.com/ws');
 
 $(function () {
   $('form').submit(function(){
@@ -14,6 +12,7 @@ $(function () {
   });
   ws.onmessage = function(msg){
     var returnObject = JSON.parse(msg.data);
+    console.log(msg.data)
     $('#messages').append($('<li>')).append($('<span id="clientId">').text(returnObject.id)).append($('<span id="clientMessage">').text(returnObject.data));
   };
   ws.onerror = function(err){
